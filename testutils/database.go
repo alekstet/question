@@ -5,11 +5,19 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
-	"os"
 )
 
 func LoadDatabase() *sql.DB {
-	db, err := sql.Open("sqlite3", "C:/Users/User/Desktop/Разработка/go-workspace/src/question/database/db_test.db")
+	/* _, filename, _, _ := runtime.Caller(0)
+	dir := path.Join(path.Dir(filename), "../../../database/db_test.db")
+	if err := os.Chdir(dir); err != nil {
+		log.Fatalf("Cannot change dir | %v | ", err)
+	}
+
+	fmt.Println(dir) */
+
+	fmt.Println("Try opening DB")
+	db, err := sql.Open("sqlite3", "C:/Users/atete/go/src/question/database/db_test.db")
 	if err != nil {
 		log.Fatal("Cannot open DB")
 	}
@@ -19,13 +27,7 @@ func LoadDatabase() *sql.DB {
 		log.Fatal("Cannot ping DB")
 	}
 
-	path, err := os.Getwd()
-	if err != nil {
-		log.Println(err)
-	}
-	fmt.Println(path)
-
-	sql, err := ioutil.ReadFile("C:/Users/User/Desktop/Разработка/go-workspace/src/question/testutils/test_init.sql")
+	sql, err := ioutil.ReadFile("C:/Users/atete/go/src/question/testutils/test_init.sql")
 	if err != nil {
 		log.Fatal("Cannot init DB")
 	}
@@ -34,6 +36,8 @@ func LoadDatabase() *sql.DB {
 	if err != nil {
 		log.Fatal("Cannot execute query")
 	}
+
+	fmt.Println("DB OK")
 
 	return db
 }

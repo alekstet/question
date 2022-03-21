@@ -33,7 +33,6 @@ func (s *SignInSuite) InvalidSignIn() {
 func (s *SignInSuite) TestSignIn() {
 	s.ValidSignIn()
 	s.InvalidSignIn()
-	s.ClearDatabaseSignIn()
 }
 
 func (s *SignInSuite) ClearDatabaseSignIn() {

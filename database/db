@@ -1,1 +1,0 @@
-SELECT Name, Answer, Question FROM user INNER JOIN user_question ON Id = User_id INNER JOIN question ON Date = Question_id WHERE Name = "Aleks"

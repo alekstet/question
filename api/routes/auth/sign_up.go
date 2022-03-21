@@ -2,7 +2,6 @@ package auth
 
 import (
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"net/http"
 	"question/api/models"
@@ -33,7 +32,6 @@ func (s *S) SignUp(w http.ResponseWriter, r *http.Request, _ httprouter.Params) 
 		helpers.Error(w, r, 500, err)
 		return
 	}
-	fmt.Println(encrypted_passoword)
 
 	_, err = s.Db.Exec(
 		`INSERT INTO users_auth (Login, Password, Nickname) VALUES ($1, $2, $3)`,

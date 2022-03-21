@@ -5,10 +5,14 @@ import (
 	"net/http"
 	"question/api/routes"
 	"question/conf"
+	"question/testutils"
+
+	"github.com/gorilla/sessions"
 )
 
 func Run(cnf *conf.Config) {
-	store := conf.New()
+	session := sessions.NewCookieStore([]byte(cnf.SessionsKey))
+	store := conf.New(session)
 
 	err := store.InitDB(cnf)
 	if err != nil {
@@ -19,6 +23,8 @@ func Run(cnf *conf.Config) {
 	if err != nil {
 		store.Log.Fatal(err)
 	}
+
+	testutils.LoadDatabase()
 
 	routes.Routes(*store)
 

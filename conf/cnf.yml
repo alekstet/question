@@ -1,6 +1,7 @@
 ip: 127.0.0.1
 port: 8080
-db: "./database/db.db"
-sql_init_path: "./conf/init.sql"
+db: ./database/db.db
+sql_init_path: ./conf/init.sql
+sessions_key : 30Vt9fH5lIBhg3J0gf1JNwLO
 
     

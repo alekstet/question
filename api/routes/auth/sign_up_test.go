@@ -1,6 +1,7 @@
 package auth_test
 
 import (
+	"fmt"
 	"question/api/models"
 	"question/testutils"
 	"testing"
@@ -14,6 +15,7 @@ type SignUpSuite struct {
 
 func (s *SignUpSuite) SetupSuiteSignUp() {
 	s.Db = testutils.LoadDatabase()
+	fmt.Println("load ok")
 }
 
 func (s *SignUpSuite) ValidSignUp() {
@@ -41,7 +43,6 @@ func (s *SignUpSuite) Test() {
 	s.ValidSignUp()
 	s.ExistsUserSignUp()
 	s.DiffPassSignUp()
-	s.ClearDatabaseSignUp()
 }
 
 func (s *SignUpSuite) ClearDatabaseSignUp() {

@@ -13,6 +13,8 @@ import (
 	_ "github.com/mattn/go-sqlite3"
 )
 
+const session_name = "test_session"
+
 func (s *S) SignIn(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	w.Header().Set("Content-Type", "application/json")
 	var exists int
@@ -38,6 +40,19 @@ func (s *S) SignIn(w http.ResponseWriter, r *http.Request, _ httprouter.Params) 
 		return
 	}
 	fmt.Println(hash)
+
+	session, err := s.Session.Get(r, session_name)
+	if err != nil {
+		helpers.Error(w, r, 500, err)
+		return
+	}
+
+	session.Values["user_id"] = data.Login
+	err = s.Session.Save(r, w, session)
+	if err != nil {
+		helpers.Error(w, r, 500, err)
+		return
+	}
 
 	if exists == 1 && helpers.CheckPasswordHash(data.Password, hash.(string)) {
 		helpers.Render(w, r, 200, nil)

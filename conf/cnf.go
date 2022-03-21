@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"io/ioutil"
 
+	"github.com/gorilla/sessions"
 	"github.com/julienschmidt/httprouter"
 	"github.com/olebedev/config"
 	"github.com/sirupsen/logrus"
@@ -14,18 +15,21 @@ type Config struct {
 	Port        string
 	DbPath      string
 	SQLInitPath string
+	SessionsKey string
 }
 
 type Store struct {
-	Db     *sql.DB
-	Log    *logrus.Logger
-	Routes *httprouter.Router
+	Db      *sql.DB
+	Log     *logrus.Logger
+	Routes  *httprouter.Router
+	Session sessions.Store
 }
 
-func New() *Store {
+func New(Session sessions.Store) *Store {
 	return &Store{
-		Log:    logrus.New(),
-		Routes: httprouter.New(),
+		Log:     logrus.New(),
+		Routes:  httprouter.New(),
+		Session: Session,
 	}
 }
 
@@ -81,10 +85,15 @@ func Cnf() (*Config, error) {
 	if err != nil {
 		return nil, err
 	}
+	SessionsKey, err := cfg.String("sessions_key")
+	if err != nil {
+		return nil, err
+	}
 	return &Config{
 		Ip:          Ip,
 		Port:        Port,
 		DbPath:      Db,
 		SQLInitPath: SQLInitPath,
+		SessionsKey: SessionsKey,
 	}, nil
 }
