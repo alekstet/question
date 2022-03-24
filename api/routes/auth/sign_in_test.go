@@ -1,6 +1,7 @@
 package auth_test
 
 import (
+	"fmt"
 	"question/api/models"
 	"question/testutils"
 	"testing"
@@ -18,7 +19,8 @@ func (s *SignInSuite) SetupSuiteSignIn() {
 
 func (s *SignInSuite) ValidSignIn() {
 	var r models.SignIn
-	r.Init("aleks", "4567")
+	r.Init("sasha2010", "21narufu")
+	fmt.Println(r)
 	w := testutils.SendForm(s.T(), s.Db, "POST", "/signin", r)
 	s.Assertions.Equal(200, w.Result().StatusCode)
 }
@@ -31,8 +33,10 @@ func (s *SignInSuite) InvalidSignIn() {
 }
 
 func (s *SignInSuite) TestSignIn() {
+	s.SetupSuiteSignIn()
 	s.ValidSignIn()
 	s.InvalidSignIn()
+	s.ClearDatabaseSignIn()
 }
 
 func (s *SignInSuite) ClearDatabaseSignIn() {

@@ -2,22 +2,17 @@ package testutils
 
 import (
 	"database/sql"
-	"fmt"
 	"io/ioutil"
 	"log"
+	"path"
+	"runtime"
 )
 
 func LoadDatabase() *sql.DB {
-	/* _, filename, _, _ := runtime.Caller(0)
-	dir := path.Join(path.Dir(filename), "../../../database/db_test.db")
-	if err := os.Chdir(dir); err != nil {
-		log.Fatalf("Cannot change dir | %v | ", err)
-	}
+	_, filename, _, _ := runtime.Caller(0)
+	dir := path.Join(path.Dir(filename), "../database/db_test.db")
 
-	fmt.Println(dir) */
-
-	fmt.Println("Try opening DB")
-	db, err := sql.Open("sqlite3", "C:/Users/atete/go/src/question/database/db_test.db")
+	db, err := sql.Open("sqlite3", dir)
 	if err != nil {
 		log.Fatal("Cannot open DB")
 	}
@@ -37,18 +32,21 @@ func LoadDatabase() *sql.DB {
 		log.Fatal("Cannot execute query")
 	}
 
-	fmt.Println("DB OK")
-
 	return db
 }
 
 func ClearDatabase(s *sql.DB) {
-	err := s.QueryRow(
-		`DROP TABLE questions
-		DROP TABLE users_auth
-		DROP TABLE users_data
-		DROP TABLE users_questions`)
+	err := s.Ping()
 	if err != nil {
-		log.Fatal("Cannot drop database")
+		log.Fatal("Cannot ping DB")
+	}
+	_, err = s.Query(`
+	DELETE FROM users_auth;
+	DELETE FROM users_auth;
+	DELETE FROM users_data;
+	DELETE FROM users_questions;
+	`)
+	if err != nil {
+		log.Fatal("Cannot delete from database")
 	}
 }

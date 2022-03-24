@@ -1,7 +1,7 @@
 package process_test
 
 import (
-	"fmt"
+	"question/api/models"
 	"question/testutils"
 	"testing"
 
@@ -14,16 +14,25 @@ type GetAnswersSuite struct {
 
 func (g *GetAnswersSuite) SetupSuiteGetAnswers() {
 	g.Db = testutils.LoadDatabase()
-	fmt.Println("load ok")
+}
+
+func (g *GetAnswersSuite) AddQuestion() {
+	var r models.Question
+	r.Init("24.03.2022", "Lol")
+	w := testutils.SendForm(g.T(), g.Db, "POST", "/questions", nil)
+	g.Assertions.Equal(201, w.Result().StatusCode)
 }
 
 func (g *GetAnswersSuite) GetAnswers() {
 	w := testutils.SendForm(g.T(), g.Db, "GET", "/new", nil)
-	g.Assertions.Equal(201, w.Result().StatusCode)
+	g.Assertions.Equal(200, w.Result().StatusCode)
 }
 
 func (g *GetAnswersSuite) Test() {
+	g.SetupSuiteGetAnswers()
+	g.AddQuestion()
 	g.GetAnswers()
+	g.ClearDatabaseGetAnswers()
 }
 
 func (g *GetAnswersSuite) ClearDatabaseGetAnswers() {

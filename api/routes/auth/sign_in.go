@@ -3,7 +3,6 @@ package auth
 import (
 	"encoding/json"
 	"errors"
-	"fmt"
 	"io/ioutil"
 	"net/http"
 	"question/api/models"
@@ -13,13 +12,15 @@ import (
 	_ "github.com/mattn/go-sqlite3"
 )
 
-const session_name = "test_session"
+const session_name = "current_session"
 
 func (s *S) SignIn(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	w.Header().Set("Content-Type", "application/json")
-	var exists int
-	var hash interface{}
 	data := &models.SignIn{}
+	var nick string
+	var hash string
+	var exists int
+
 	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
 		helpers.Error(w, r, 500, err)
@@ -27,34 +28,28 @@ func (s *S) SignIn(w http.ResponseWriter, r *http.Request, _ httprouter.Params) 
 	}
 	json.Unmarshal(body, &data)
 
-	/* err = s.Db.QueryRow(
-	`SELECT EXISTS
-	(SELECT * FROM users_auth
-		WHERE Login = $1 AND Password = $2)`, data.Login, data.Password).Scan(&exists) */
-
 	err = s.Db.QueryRow(
-		`SELECT COUNT(*), Password FROM users_auth
-			WHERE Login = $1 AND Password = $2`, data.Login, data.Password).Scan(&exists, &hash)
+		`SELECT COUNT(*), Password, Nickname FROM users_auth
+			WHERE Login = $1`, data.Login).Scan(&exists, &hash, &nick)
 	if err != nil {
 		helpers.Error(w, r, 400, err)
 		return
 	}
-	fmt.Println(hash)
 
-	session, err := s.Session.Get(r, session_name)
+	session, _ := s.Session.Get(r, session_name)
 	if err != nil {
 		helpers.Error(w, r, 500, err)
 		return
 	}
 
-	session.Values["user_id"] = data.Login
+	session.Values["user_nickname"] = nick
 	err = s.Session.Save(r, w, session)
 	if err != nil {
 		helpers.Error(w, r, 500, err)
 		return
 	}
 
-	if exists == 1 && helpers.CheckPasswordHash(data.Password, hash.(string)) {
+	if exists == 1 && helpers.CheckPasswordHash(data.Password, hash) {
 		helpers.Render(w, r, 200, nil)
 		return
 	} else {

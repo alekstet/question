@@ -33,6 +33,7 @@ func (s *S) TodayAnswers(w http.ResponseWriter, r *http.Request, _ httprouter.Pa
 
 	rows, err := s.Db.Query(sql)
 	if err != nil {
+		fmt.Println(1)
 		helpers.Error(w, r, 500, err)
 		return
 	}
@@ -42,6 +43,7 @@ func (s *S) TodayAnswers(w http.ResponseWriter, r *http.Request, _ httprouter.Pa
 		p := model.TodaysAnswer{}
 		err := rows.Scan(&p.Nickname, &p.Answer)
 		if err != nil {
+			fmt.Println(2)
 			helpers.Error(w, r, 500, err)
 			return
 		}
@@ -50,6 +52,7 @@ func (s *S) TodayAnswers(w http.ResponseWriter, r *http.Request, _ httprouter.Pa
 
 	err = s.Db.QueryRow("SELECT Question FROM questions WHERE Date = $1", date).Scan(&todaysQuestion)
 	if err != nil {
+		fmt.Println(3)
 		helpers.Error(w, r, 500, err)
 		return
 	}

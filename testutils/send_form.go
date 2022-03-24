@@ -3,6 +3,7 @@ package testutils
 import (
 	"database/sql"
 	"encoding/json"
+	"fmt"
 	"io"
 	"net/http/httptest"
 	"net/url"
@@ -47,6 +48,8 @@ func SendForm(t *testing.T, db *sql.DB, method string, target string, i interfac
 		assert.Nil(t, err)
 		body = strings.NewReader(*(*string)(unsafe.Pointer(&res)))
 	}
+
+	fmt.Println(body)
 
 	r := httptest.NewRequest(method, target, body)
 	r.Header.Add("Content-Type", "application/json")

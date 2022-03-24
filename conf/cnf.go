@@ -22,15 +22,16 @@ type Store struct {
 	Db      *sql.DB
 	Log     *logrus.Logger
 	Routes  *httprouter.Router
-	Session sessions.Store
+	Session *sessions.CookieStore
 }
 
-func New(Session sessions.Store) *Store {
-	return &Store{
+func New(key string) *Store {
+	s := &Store{
 		Log:     logrus.New(),
 		Routes:  httprouter.New(),
-		Session: Session,
+		Session: sessions.NewCookieStore([]byte(key)),
 	}
+	return s
 }
 
 func (s *Store) InitDB(c *Config) error {

@@ -47,3 +47,8 @@ type UserAnsw struct {
 	Question string `json:"question"`
 	Answer   string `json:"answer"`
 }
+
+func (q *Question) Init(date, question string) {
+	q.Date = date
+	q.Question = question
+}

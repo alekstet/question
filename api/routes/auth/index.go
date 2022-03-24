@@ -10,9 +10,10 @@ type S conf.Store
 
 func New(s conf.Store) *S {
 	return &S{
-		Db:     s.Db,
-		Log:    s.Log,
-		Routes: s.Routes,
+		Db:      s.Db,
+		Log:     s.Log,
+		Routes:  s.Routes,
+		Session: s.Session,
 	}
 }
 
