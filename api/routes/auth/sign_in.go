@@ -5,6 +5,7 @@ import (
 	"errors"
 	"io/ioutil"
 	"net/http"
+	er "question/api/errors"
 	"question/api/models"
 	"question/helpers"
 
@@ -27,6 +28,11 @@ func (s *S) SignIn(w http.ResponseWriter, r *http.Request, _ httprouter.Params) 
 		return
 	}
 	json.Unmarshal(body, &data)
+
+	if !data.Valid() {
+		helpers.Error(w, r, 400, er.ErrDataNotValid)
+		return
+	}
 
 	err = s.Db.QueryRow(
 		`SELECT COUNT(*), Password, Nickname FROM users_auth

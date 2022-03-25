@@ -2,6 +2,7 @@ package auth
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 	"question/api/models"
@@ -27,7 +28,9 @@ func (s *S) SignUp(w http.ResponseWriter, r *http.Request, _ httprouter.Params) 
 		return
 	}
 
-	encrypted_passoword, err := helpers.HashPassword(data.Password)
+	fmt.Println(data)
+
+	encrypted_password, err := helpers.HashPassword(data.Password)
 	if err != nil {
 		helpers.Error(w, r, 500, err)
 		return
@@ -35,7 +38,7 @@ func (s *S) SignUp(w http.ResponseWriter, r *http.Request, _ httprouter.Params) 
 
 	_, err = s.Db.Exec(
 		`INSERT INTO users_auth (Login, Password, Nickname) VALUES ($1, $2, $3)`,
-		data.Login, encrypted_passoword, data.Nickname)
+		data.Login, encrypted_password, data.Nickname)
 	if err != nil {
 		helpers.Error(w, r, 400, err)
 		return

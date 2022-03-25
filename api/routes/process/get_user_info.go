@@ -43,13 +43,7 @@ func (s *S) UserInfo(w http.ResponseWriter, r *http.Request, params httprouter.P
 		userAnsw = append(userAnsw, p)
 	}
 
-	err = s.Db.QueryRow("SELECT Name FROM users_data WHERE User_nickname = $1", nickname).Scan(&name)
-	if err != nil {
-		helpers.Error(w, r, 500, err)
-		return
-	}
-
-	err = s.Db.QueryRow("SELECT Sex FROM users_data WHERE User_nickname = $1", nickname).Scan(&sex)
+	err = s.Db.QueryRow("SELECT Name, Sex FROM users_data WHERE User_nickname = $1", nickname).Scan(&name, &sex)
 	if err != nil {
 		helpers.Error(w, r, 500, err)
 		return

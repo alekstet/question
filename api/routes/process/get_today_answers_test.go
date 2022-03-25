@@ -18,7 +18,7 @@ func (g *GetAnswersSuite) SetupSuiteGetAnswers() {
 
 func (g *GetAnswersSuite) AddQuestion() {
 	var r models.Question
-	r.Init("24.03.2022", "Lol")
+	r.Init("24.03.2022", "Lol1")
 	w := testutils.SendForm(g.T(), g.Db, "POST", "/questions", nil)
 	g.Assertions.Equal(201, w.Result().StatusCode)
 }

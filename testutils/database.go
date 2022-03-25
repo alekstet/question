@@ -2,6 +2,7 @@ package testutils
 
 import (
 	"database/sql"
+	"fmt"
 	"io/ioutil"
 	"log"
 	"path"
@@ -11,6 +12,7 @@ import (
 func LoadDatabase() *sql.DB {
 	_, filename, _, _ := runtime.Caller(0)
 	dir := path.Join(path.Dir(filename), "../database/db_test.db")
+	dir1 := path.Join(path.Dir(filename), "../conf/init.sql")
 
 	db, err := sql.Open("sqlite3", dir)
 	if err != nil {
@@ -22,7 +24,7 @@ func LoadDatabase() *sql.DB {
 		log.Fatal("Cannot ping DB")
 	}
 
-	sql, err := ioutil.ReadFile("C:/Users/atete/go/src/question/testutils/test_init.sql")
+	sql, err := ioutil.ReadFile(dir1)
 	if err != nil {
 		log.Fatal("Cannot init DB")
 	}
@@ -35,18 +37,17 @@ func LoadDatabase() *sql.DB {
 	return db
 }
 
-func ClearDatabase(s *sql.DB) {
-	err := s.Ping()
+func ClearDatabase(db *sql.DB) {
+	n := New()
+	n.Db = db
+	err := n.Db.Ping()
 	if err != nil {
 		log.Fatal("Cannot ping DB")
 	}
-	_, err = s.Query(`
-	DELETE FROM users_auth;
-	DELETE FROM users_auth;
-	DELETE FROM users_data;
-	DELETE FROM users_questions;
-	`)
+
+	result, err := n.Db.Exec(`DELETE FROM users_auth;DELETE FROM users_data;DELETE FROM questions;DELETE FROM users_questions`)
 	if err != nil {
 		log.Fatal("Cannot delete from database")
 	}
+	fmt.Println(result.RowsAffected())
 }

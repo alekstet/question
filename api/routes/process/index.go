@@ -24,6 +24,7 @@ func (s *S) Register() {
 	s.Routes.GET("/new", s.TodayAnswers)
 	s.Routes.GET("/users", s.GetUsers)
 	s.Routes.GET("/users/:user", s.UserInfo)
-	s.Routes.POST("/new", s.Authenticate(s.CreateAnswer))
+	s.Routes.POST("/new", s.CreateAnswer)
+	//s.Routes.POST("/new", s.Authenticate(s.CreateAnswer))
 	s.Routes.POST("/questions", s.AddQuestion)
 }

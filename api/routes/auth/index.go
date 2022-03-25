@@ -20,4 +20,5 @@ func New(s conf.Store) *S {
 func (s *S) Register() {
 	s.Routes.POST("/signup", s.SignUp)
 	s.Routes.POST("/signin", s.SignIn)
+	s.Routes.POST("/logout", s.Logout)
 }

@@ -24,9 +24,16 @@ func (su *SignUp) Init(nickname, login, password, confPassword string) {
 	su.ConfirmPassword = confPassword
 }
 
-func (su *SignIn) Init(login, password string) {
-	su.Login = login
-	su.Password = password
+func (si *SignIn) Init(login, password string) {
+	si.Login = login
+	si.Password = password
+}
+
+func (si *SignIn) Valid() bool {
+	if si.Login != "" && si.Password != "" {
+		return true
+	}
+	return false
 }
 
 func (su *SignUp) Valid() error {

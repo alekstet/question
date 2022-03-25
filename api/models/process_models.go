@@ -48,6 +48,28 @@ type UserAnsw struct {
 	Answer   string `json:"answer"`
 }
 
+func (u *User_question) Valid() bool {
+	if u.QuestionId != "" && u.UserNickname != "" && u.Answer != "" {
+		return true
+	}
+	return false
+}
+
+func (u *User_question) Init(questionId, userNickname, answer, createdAt, updatedAt string) {
+	u.QuestionId = questionId
+	u.UserNickname = userNickname
+	u.Answer = answer
+	u.CreatedAt = createdAt
+	u.UpdatedAt = updatedAt
+}
+
+func (q *Question) Valid() bool {
+	if q.Date != "" && q.Question != "" {
+		return true
+	}
+	return false
+}
+
 func (q *Question) Init(date, question string) {
 	q.Date = date
 	q.Question = question
