@@ -1,7 +1,7 @@
 package auth
 
 import (
-	"question/conf"
+	"github.com/question/conf"
 
 	_ "github.com/mattn/go-sqlite3"
 )

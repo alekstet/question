@@ -2,7 +2,8 @@ package auth
 
 import (
 	"net/http"
-	"question/helpers"
+
+	"github.com/question/helpers"
 
 	"github.com/julienschmidt/httprouter"
 	_ "github.com/mattn/go-sqlite3"

@@ -1,10 +1,11 @@
 package process_test
 
 import (
-	"question/api/models"
-	"question/testutils"
 	"testing"
 	"time"
+
+	"github.com/question/api/models"
+	"github.com/question/testutils"
 
 	"github.com/stretchr/testify/suite"
 )

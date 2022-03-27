@@ -7,11 +7,12 @@ import (
 	"io"
 	"net/http/httptest"
 	"net/url"
-	"question/api/routes"
-	"question/conf"
 	"strings"
 	"testing"
 	"unsafe"
+
+	"github.com/question/api/routes"
+	"github.com/question/conf"
 
 	"github.com/julienschmidt/httprouter"
 	"github.com/sirupsen/logrus"

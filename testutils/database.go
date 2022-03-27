@@ -11,10 +11,10 @@ import (
 
 func LoadDatabase() *sql.DB {
 	_, filename, _, _ := runtime.Caller(0)
-	dir := path.Join(path.Dir(filename), "../database/db_test.db")
-	dir1 := path.Join(path.Dir(filename), "../conf/init.sql")
+	path_base := path.Join(path.Dir(filename), "../database/db_test.db")
+	path_init_db := path.Join(path.Dir(filename), "../conf/init.sql")
 
-	db, err := sql.Open("sqlite3", dir)
+	db, err := sql.Open("sqlite3", path_base)
 	if err != nil {
 		log.Fatal("Cannot open DB")
 	}
@@ -24,7 +24,7 @@ func LoadDatabase() *sql.DB {
 		log.Fatal("Cannot ping DB")
 	}
 
-	sql, err := ioutil.ReadFile(dir1)
+	sql, err := ioutil.ReadFile(path_init_db)
 	if err != nil {
 		log.Fatal("Cannot init DB")
 	}
