@@ -1,7 +1,7 @@
 package process
 
 import (
-	"question/conf"
+	"github.com/alekstet/question/conf"
 
 	_ "github.com/mattn/go-sqlite3"
 )

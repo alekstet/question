@@ -11,8 +11,8 @@ import (
 	"testing"
 	"unsafe"
 
-	"github.com/question/api/routes"
-	"github.com/question/conf"
+	"github.com/alekstet/question/api/routes"
+	"github.com/alekstet/question/conf"
 
 	"github.com/julienschmidt/httprouter"
 	"github.com/sirupsen/logrus"

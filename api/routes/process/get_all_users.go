@@ -2,8 +2,9 @@ package process
 
 import (
 	"net/http"
-	model "question/api/models"
-	"question/helpers"
+
+	model "github.com/alekstet/question/api/models"
+	"github.com/alekstet/question/helpers"
 
 	"github.com/julienschmidt/httprouter"
 	_ "github.com/mattn/go-sqlite3"

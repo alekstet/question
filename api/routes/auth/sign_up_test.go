@@ -3,8 +3,8 @@ package auth_test
 import (
 	"testing"
 
-	"github.com/question/api/models"
-	"github.com/question/testutils"
+	"github.com/alekstet/question/api/models"
+	"github.com/alekstet/question/testutils"
 
 	"github.com/stretchr/testify/suite"
 )

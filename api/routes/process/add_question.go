@@ -7,9 +7,9 @@ import (
 	"net/http"
 	"time"
 
-	er "github.com/question/api/errors"
-	"github.com/question/api/models"
-	"github.com/question/helpers"
+	er "github.com/alekstet/question/api/errors"
+	"github.com/alekstet/question/api/models"
+	"github.com/alekstet/question/helpers"
 
 	"github.com/julienschmidt/httprouter"
 	_ "github.com/mattn/go-sqlite3"

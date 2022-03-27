@@ -3,8 +3,8 @@ package main
 import (
 	"log"
 
-	"github.com/question/cmd"
-	"github.com/question/conf"
+	"github.com/alekstet/question/cmd"
+	"github.com/alekstet/question/conf"
 )
 
 func main() {

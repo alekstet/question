@@ -2,9 +2,10 @@ package routes
 
 import (
 	"net/http"
-	"question/api/routes/auth"
-	"question/api/routes/process"
-	"question/conf"
+
+	"github.com/alekstet/question/api/routes/auth"
+	"github.com/alekstet/question/api/routes/process"
+	"github.com/alekstet/question/conf"
 
 	"github.com/julienschmidt/httprouter"
 )

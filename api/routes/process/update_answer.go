@@ -4,9 +4,10 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"net/http"
-	"question/api/models"
-	"question/helpers"
 	"time"
+
+	"github.com/alekstet/question/api/models"
+	"github.com/alekstet/question/helpers"
 
 	"github.com/julienschmidt/httprouter"
 	_ "github.com/mattn/go-sqlite3"

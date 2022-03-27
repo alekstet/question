@@ -6,8 +6,8 @@ import (
 	"io/ioutil"
 	"net/http"
 
-	"github.com/question/api/models"
-	"github.com/question/helpers"
+	"github.com/alekstet/question/api/models"
+	"github.com/alekstet/question/helpers"
 
 	"github.com/julienschmidt/httprouter"
 	_ "github.com/mattn/go-sqlite3"

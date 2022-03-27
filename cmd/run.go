@@ -3,8 +3,9 @@ package cmd
 import (
 	"net"
 	"net/http"
-	"question/api/routes"
-	"question/conf"
+
+	"github.com/alekstet/question/api/routes"
+	"github.com/alekstet/question/conf"
 )
 
 func Run(cnf *conf.Config) {

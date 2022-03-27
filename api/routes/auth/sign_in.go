@@ -5,9 +5,10 @@ import (
 	"errors"
 	"io/ioutil"
 	"net/http"
-	er "question/api/errors"
-	"question/api/models"
-	"question/helpers"
+
+	er "github.com/alekstet/question/api/errors"
+	"github.com/alekstet/question/api/models"
+	"github.com/alekstet/question/helpers"
 
 	"github.com/julienschmidt/httprouter"
 	_ "github.com/mattn/go-sqlite3"

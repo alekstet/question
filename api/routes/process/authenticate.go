@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/question/helpers"
+	"github.com/alekstet/question/helpers"
 
 	"github.com/julienschmidt/httprouter"
 )
