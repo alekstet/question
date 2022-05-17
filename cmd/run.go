@@ -11,8 +11,7 @@ import (
 func Run(cnf *conf.Config) {
 	store := conf.New(cnf.SessionsKey)
 
-	err := store.InitDB(cnf)
-	if err != nil {
+	if err := store.InitDB(cnf); err != nil {
 		store.Log.Fatal(err)
 	}
 

@@ -8,12 +8,12 @@ import (
 
 type S conf.Store
 
-func New(s conf.Store) *S {
+func New(store conf.Store) *S {
 	return &S{
-		Db:      s.Db,
-		Log:     s.Log,
-		Routes:  s.Routes,
-		Session: s.Session,
+		Db:      store.Db,
+		Log:     store.Log,
+		Routes:  store.Routes,
+		Session: store.Session,
 	}
 }
 

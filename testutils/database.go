@@ -19,17 +19,16 @@ func LoadDatabase() *sql.DB {
 		log.Fatal("Cannot open DB")
 	}
 
-	err = db.Ping()
-	if err != nil {
+	if err = db.Ping(); err != nil {
 		log.Fatal("Cannot ping DB")
 	}
 
-	sql, err := ioutil.ReadFile(path_init_db)
+	query, err := ioutil.ReadFile(path_init_db)
 	if err != nil {
 		log.Fatal("Cannot init DB")
 	}
 
-	_, err = db.Query(string(sql))
+	_, err = db.Query(string(query))
 	if err != nil {
 		log.Fatal("Cannot execute query")
 	}
@@ -40,8 +39,7 @@ func LoadDatabase() *sql.DB {
 func ClearDatabase(db *sql.DB) {
 	n := New()
 	n.Db = db
-	err := n.Db.Ping()
-	if err != nil {
+	if err := n.Db.Ping(); err != nil {
 		log.Fatal("Cannot ping DB")
 	}
 

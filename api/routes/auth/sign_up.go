@@ -23,12 +23,10 @@ func (s *S) SignUp(w http.ResponseWriter, r *http.Request, _ httprouter.Params) 
 	}
 	json.Unmarshal(body, &data)
 
-	err = data.Valid()
-	if err != nil {
+	if err = data.Valid(); err != nil {
 		helpers.Error(w, r, 400, err)
 		return
 	}
-
 	fmt.Println(data)
 
 	encrypted_password, err := helpers.HashPassword(data.Password)

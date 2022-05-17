@@ -43,15 +43,14 @@ func (s *S) SignIn(w http.ResponseWriter, r *http.Request, _ httprouter.Params) 
 		return
 	}
 
-	session, _ := s.Session.Get(r, session_name)
+	session, err := s.Session.Get(r, session_name)
 	if err != nil {
 		helpers.Error(w, r, 500, err)
 		return
 	}
 
 	session.Values["user_nickname"] = nick
-	err = s.Session.Save(r, w, session)
-	if err != nil {
+	if err = s.Session.Save(r, w, session); err != nil {
 		helpers.Error(w, r, 500, err)
 		return
 	}

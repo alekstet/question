@@ -5,6 +5,7 @@ import (
 	"io/ioutil"
 
 	"github.com/gorilla/sessions"
+	"github.com/ilyakaznacheev/cleanenv"
 	"github.com/julienschmidt/httprouter"
 	"github.com/olebedev/config"
 	"github.com/sirupsen/logrus"
@@ -17,6 +18,16 @@ type Config struct {
 	SQLInitPath string
 	SessionsKey string
 }
+
+type ConfigDatabase struct {
+	Host        string `yaml:"host" env:"HOST" env-default:"127.0.0.1"`
+	Port        string `yaml:"port" env:"PORT" env-default:"8080"`
+	DbPath      string `yaml:"db" env:"PORT"`
+	SQLInitPath string `yaml:"sql_init_path" env:"PORT"`
+	SessionsKey string `yaml:"sessions_key" env:"PORT"`
+}
+
+var cfg ConfigDatabase
 
 type Store struct {
 	Db      *sql.DB
@@ -50,8 +61,7 @@ func (s *Store) InitDB(c *Config) error {
 		return err
 	}
 
-	err = db.Ping()
-	if err != nil {
+	if err = db.Ping(); err != nil {
 		return err
 	}
 
@@ -65,6 +75,11 @@ func Cnf() (*Config, error) {
 		return nil, err
 	}
 	yamlString := string(file)
+
+	err = cleanenv.ReadConfig("conf/cnf.yml", &cfg)
+	if err != nil {
+		return nil, err
+	}
 
 	cfg, err := config.ParseYaml(yamlString)
 	if err != nil {
