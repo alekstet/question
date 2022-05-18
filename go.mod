@@ -1,4 +1,4 @@
-module question
+module github.com/alekstet/question
 
 go 1.16
 
