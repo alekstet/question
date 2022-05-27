@@ -19,17 +19,16 @@ func LoadDatabase() *sql.DB {
 		log.Fatal("Cannot open DB")
 	}
 
-	err = db.Ping()
-	if err != nil {
+	if err = db.Ping(); err != nil {
 		log.Fatal("Cannot ping DB")
 	}
 
-	sql, err := ioutil.ReadFile(path_init_db)
+	query, err := ioutil.ReadFile(path_init_db)
 	if err != nil {
 		log.Fatal("Cannot init DB")
 	}
 
-	_, err = db.Query(string(sql))
+	_, err = db.Query(string(query))
 	if err != nil {
 		log.Fatal("Cannot execute query")
 	}
@@ -38,16 +37,16 @@ func LoadDatabase() *sql.DB {
 }
 
 func ClearDatabase(db *sql.DB) {
-	n := New()
-	n.Db = db
-	err := n.Db.Ping()
-	if err != nil {
+	store := NewStore()
+	store.Db = db
+	if err := store.Db.Ping(); err != nil {
 		log.Fatal("Cannot ping DB")
 	}
 
-	result, err := n.Db.Exec(`DELETE FROM users_auth;DELETE FROM users_data;DELETE FROM questions;DELETE FROM users_questions`)
+	result, err := store.Db.Exec(`DELETE FROM users_auth;DELETE FROM users_data;DELETE FROM questions;DELETE FROM users_questions`)
 	if err != nil {
 		log.Fatal("Cannot delete from database")
 	}
+
 	fmt.Println(result.RowsAffected())
 }

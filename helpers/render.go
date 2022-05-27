@@ -19,12 +19,14 @@ func Render(w http.ResponseWriter, r *http.Request, code int, data interface{}) 
 		w.WriteHeader(code)
 		return
 	}
+
 	if data != nil {
 		resp, err := json.Marshal(data)
 		if err != nil {
 			w.WriteHeader(500)
 			return
 		}
+
 		w.WriteHeader(code)
 		w.Write(resp)
 	}

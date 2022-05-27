@@ -3,10 +3,7 @@ package routes
 import (
 	"net/http"
 
-	"github.com/alekstet/question/api/routes/auth"
 	"github.com/alekstet/question/api/routes/process"
-	"github.com/alekstet/question/conf"
-
 	"github.com/julienschmidt/httprouter"
 )
 
@@ -20,9 +17,8 @@ func New() *R {
 	}
 }
 
-func Routes(s conf.Store) *httprouter.Router {
-	process.New(s).Register()
-	auth.New(s).Register()
+func Routes(s process.Store) *httprouter.Router {
+	s.Register()
 	return s.Routes
 }
 
