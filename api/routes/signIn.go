@@ -71,10 +71,10 @@ func (s *Store) welcome(w http.ResponseWriter, r *http.Request, _ httprouter.Par
 	c, err := r.Cookie("token")
 	if err != nil {
 		if err == http.ErrNoCookie {
-			w.WriteHeader(http.StatusUnauthorized)
+			helpers.Error(w, r, http.StatusUnauthorized, err)
 			return
 		}
-		w.WriteHeader(http.StatusBadRequest)
+		helpers.Error(w, r, http.StatusBadRequest, err)
 		return
 	}
 
