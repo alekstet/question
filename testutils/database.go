@@ -11,10 +11,10 @@ import (
 
 func LoadDatabase() *sql.DB {
 	_, filename, _, _ := runtime.Caller(0)
-	path_base := path.Join(path.Dir(filename), "../database/db_test.db")
-	path_init_db := path.Join(path.Dir(filename), "../conf/init.sql")
+	pathBase := path.Join(path.Dir(filename), "../database/db_test.db")
+	pathInitDB := path.Join(path.Dir(filename), "../conf/init.sql")
 
-	db, err := sql.Open("sqlite3", path_base)
+	db, err := sql.Open("sqlite3", pathBase)
 	if err != nil {
 		log.Fatal("Cannot open DB")
 	}
@@ -23,7 +23,7 @@ func LoadDatabase() *sql.DB {
 		log.Fatal("Cannot ping DB")
 	}
 
-	query, err := ioutil.ReadFile(path_init_db)
+	query, err := ioutil.ReadFile(pathInitDB)
 	if err != nil {
 		log.Fatal("Cannot init DB")
 	}
@@ -36,16 +36,23 @@ func LoadDatabase() *sql.DB {
 	return db
 }
 
+const queryClearDB = `
+DELETE FROM users_auth;
+DELETE FROM users_data;
+DELETE FROM questions;
+DELETE FROM users_questions`
+
 func ClearDatabase(db *sql.DB) {
-	n := New()
-	n.Db = db
-	if err := n.Db.Ping(); err != nil {
+	store := NewStore()
+	store.Db = db
+	if err := store.Db.Ping(); err != nil {
 		log.Fatal("Cannot ping DB")
 	}
 
-	result, err := n.Db.Exec(`DELETE FROM users_auth;DELETE FROM users_data;DELETE FROM questions;DELETE FROM users_questions`)
+	result, err := store.Db.Exec(queryClearDB)
 	if err != nil {
 		log.Fatal("Cannot delete from database")
 	}
+
 	fmt.Println(result.RowsAffected())
 }

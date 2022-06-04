@@ -1,11 +1,10 @@
-package process_test
+package routes_test
 
 import (
 	"testing"
 
 	"github.com/alekstet/question/api/models"
 	"github.com/alekstet/question/testutils"
-
 	"github.com/stretchr/testify/suite"
 )
 

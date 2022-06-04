@@ -12,5 +12,6 @@ func main() {
 	if err != nil {
 		log.Fatalf("error with config: %s", err)
 	}
+
 	cmd.Run(cnf)
 }

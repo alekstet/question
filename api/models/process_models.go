@@ -17,7 +17,7 @@ type UsersData struct {
 	Sex          string `json:"sex"`
 }
 
-type User_question struct {
+type UserQuestion struct {
 	QuestionId   string `json:"questionId"`
 	UserNickname string `json:"userNickname"`
 	Answer       string `json:"answer"`
@@ -48,14 +48,14 @@ type UserAnsw struct {
 	Answer   string `json:"answer"`
 }
 
-func (u *User_question) Valid() bool {
+func (u *UserQuestion) Valid() bool {
 	if u.QuestionId != "" && u.UserNickname != "" && u.Answer != "" {
 		return true
 	}
 	return false
 }
 
-func (u *User_question) Init(questionId, userNickname, answer, createdAt, updatedAt string) {
+func (u *UserQuestion) Init(questionId, userNickname, answer, createdAt, updatedAt string) {
 	u.QuestionId = questionId
 	u.UserNickname = userNickname
 	u.Answer = answer
@@ -67,6 +67,7 @@ func (q *Question) Valid() bool {
 	if q.Date != "" && q.Question != "" {
 		return true
 	}
+
 	return false
 }
 

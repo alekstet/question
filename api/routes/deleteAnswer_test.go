@@ -1,4 +1,4 @@
-package process_test
+package routes_test
 
 import (
 	"testing"
@@ -6,7 +6,6 @@ import (
 
 	"github.com/alekstet/question/api/models"
 	"github.com/alekstet/question/testutils"
-
 	"github.com/stretchr/testify/suite"
 )
 
@@ -34,7 +33,7 @@ func (d *DeleteAnswerSuite) AddQuestion() {
 }
 
 func (d *DeleteAnswerSuite) CreateAnswer() {
-	var u models.User_question
+	var u models.UserQuestion
 	date := time.Now().Format("02.01.2006")
 	time_now := time.Now().Format("02.01.2006 15:04:05")
 	u.Init(date, "aleks34", "Good", time_now, time_now)

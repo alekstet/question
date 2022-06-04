@@ -3,10 +3,6 @@ package routes
 import (
 	"net/http"
 
-	"github.com/alekstet/question/api/routes/auth"
-	"github.com/alekstet/question/api/routes/process"
-	"github.com/alekstet/question/conf"
-
 	"github.com/julienschmidt/httprouter"
 )
 
@@ -14,15 +10,14 @@ type R struct {
 	Router *httprouter.Router
 }
 
-func New() *R {
+func NewRouter() *R {
 	return &R{
 		Router: httprouter.New(),
 	}
 }
 
-func Routes(s conf.Store) *httprouter.Router {
-	process.New(s).Register()
-	auth.New(s).Register()
+func Routes(s Store) *httprouter.Router {
+	s.Register()
 	return s.Routes
 }
 

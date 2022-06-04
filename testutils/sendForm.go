@@ -3,7 +3,6 @@ package testutils
 import (
 	"database/sql"
 	"encoding/json"
-	"fmt"
 	"io"
 	"net/http/httptest"
 	"net/url"
@@ -25,20 +24,20 @@ type Store struct {
 	Db *sql.DB
 }
 
-func New() *conf.Store {
+func NewStore() *conf.Store {
 	return &conf.Store{
 		Log:    logrus.New(),
 		Routes: httprouter.New(),
 	}
 }
 
-func SendForm(t *testing.T, db *sql.DB, method string, target string, i interface{}) *httptest.ResponseRecorder {
-	n := New()
-	n.Db = db
-	mux := routes.Routes(*n)
+func SendForm(t *testing.T, db *sql.DB, method string, target string, body interface{}) *httptest.ResponseRecorder {
+	var Body io.Reader
+	store := NewStore()
+	store.Db = db
+	mux := routes.Routes(*store)
 
-	var body io.Reader
-	switch v := i.(type) {
+	switch v := body.(type) {
 	case url.Values:
 		body = strings.NewReader(v.Encode())
 	case string:
@@ -50,11 +49,10 @@ func SendForm(t *testing.T, db *sql.DB, method string, target string, i interfac
 		body = strings.NewReader(*(*string)(unsafe.Pointer(&res)))
 	}
 
-	fmt.Println(body)
-
-	r := httptest.NewRequest(method, target, body)
+	r := httptest.NewRequest(method, target, Body)
 	r.Header.Add("Content-Type", "application/json")
 	w := httptest.NewRecorder()
 	mux.ServeHTTP(w, r)
+
 	return w
 }
