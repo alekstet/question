@@ -13,8 +13,7 @@ import (
 )
 
 func (s *Store) createAnswer(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-	w.Header().Set("Content-Type", "application/json")
-	data := &models.UserQuestion{}
+	var data models.UserQuestion
 	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
 		helpers.Error(w, r, http.StatusBadRequest, err)
@@ -25,7 +24,7 @@ func (s *Store) createAnswer(w http.ResponseWriter, r *http.Request, _ httproute
 		helpers.Error(w, r, http.StatusInternalServerError, err)
 	}
 
-	err = s.Querier.CreateAnswer(*data)
+	err = s.Querier.CreateAnswer(data)
 	if err != nil {
 		helpers.Error(w, r, http.StatusInternalServerError, err)
 		return

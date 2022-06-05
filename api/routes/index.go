@@ -13,5 +13,6 @@ func (s *Store) Register() {
 	s.Routes.POST("/new", s.createAnswer)
 	s.Routes.POST("/questions", s.addQuestion)
 	s.Routes.POST("/signin", s.signIn)
+	s.Routes.POST("/signup", s.signUp)
 	s.Routes.POST("/welcome", s.welcome)
 }

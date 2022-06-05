@@ -1,7 +1,6 @@
 package routes
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/alekstet/question/helpers"
@@ -10,8 +9,6 @@ import (
 )
 
 func (s *Store) getUsers(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-	fmt.Println("Im here")
-	fmt.Println(s.Querier)
 	users, err := s.Querier.GetUsers()
 	if err != nil {
 		helpers.Render(w, r, http.StatusInternalServerError, nil)

@@ -9,7 +9,6 @@ import (
 )
 
 func (s *Store) getUserInfo(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
-	w.Header().Set("Content-Type", "application/json")
 	sort := r.URL.Query().Get("sort")
 	nickname := params.ByName("user")
 

@@ -11,6 +11,7 @@ type Querier interface {
 	GetUsers() ([]models.UsersData, error)
 	AddQuestion(data models.Question) error
 	GetUserInfo(nickname, sort string) (*models.UserInfo, error)
+	GetTodayAnswers(page string) (*models.TodaysInfo, error)
 }
 
 var _ Querier = (*Store)(nil)

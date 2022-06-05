@@ -3,18 +3,25 @@ package models
 import (
 	"errors"
 	"fmt"
+
+	"github.com/dgrijalva/jwt-go"
 )
 
 type SignUp struct {
 	Nickname        string `json:"nickname"`
 	Login           string `json:"login"`
 	Password        string `json:"password"`
-	ConfirmPassword string `json:"confPassword"`
+	ConfirmPassword string `json:"confirm_password"`
 }
 
 type SignIn struct {
 	Login    string `json:"login"`
 	Password string `json:"password"`
+}
+
+type Claims struct {
+	Login string `json:"login"`
+	jwt.StandardClaims
 }
 
 func (su *SignUp) Init(nickname, login, password, confPassword string) {

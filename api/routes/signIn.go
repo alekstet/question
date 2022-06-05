@@ -3,58 +3,76 @@ package routes
 import (
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"net/http"
+	"os"
 	"time"
 
 	"github.com/alekstet/question/api/errors"
+	"github.com/alekstet/question/api/models"
 	"github.com/alekstet/question/helpers"
 	"github.com/dgrijalva/jwt-go"
+	"github.com/joho/godotenv"
 	"github.com/julienschmidt/httprouter"
 )
 
-var jwtKey = []byte("my_secret_key")
-
-var users = map[string]string{
-	"user1": "password1",
-	"user2": "password2",
-}
-
-type Credentials struct {
-	Password string `json:"password"`
-	Username string `json:"username"`
-}
-
-type Claims struct {
-	Username string `json:"username"`
-	jwt.StandardClaims
-}
+const existUser = `
+SELECT COUNT(*), Password, Nickname FROM users_auth
+WHERE Login = $1`
 
 func (s *Store) signIn(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-	var creds Credentials
-	err := json.NewDecoder(r.Body).Decode(&creds)
+	var (
+		data           models.SignIn
+		nickname, hash string
+		exists         int
+	)
+
+	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
+		helpers.Error(w, r, http.StatusInternalServerError, err)
+		return
+	}
+
+	err = json.Unmarshal(body, &data)
+	if err != nil {
+		helpers.Error(w, r, http.StatusInternalServerError, err)
+		return
+	}
+
+	if !data.Valid() {
 		helpers.Error(w, r, http.StatusBadRequest, err)
 		return
 	}
 
-	expectedPassword, ok := users[creds.Username]
+	err = s.Db.QueryRow(existUser, data.Login).Scan(&exists, &hash, &nickname)
+	if err != nil {
+		helpers.Error(w, r, http.StatusUnauthorized, errors.ErrIncorectAuthData)
+		return
+	}
 
-	if !ok || expectedPassword != creds.Password {
-		err := errors.ErrIncorectAuthData
-		helpers.Error(w, r, http.StatusUnauthorized, err)
+	if exists != 1 && !helpers.CheckPasswordHash(data.Password, hash) {
+		helpers.Error(w, r, http.StatusUnauthorized, errors.ErrIncorectAuthData)
 		return
 	}
 
 	expirationTime := time.Now().Add(5 * time.Minute)
-	claims := &Claims{
-		Username: creds.Username,
+	claims := &models.Claims{
+		Login: data.Login,
 		StandardClaims: jwt.StandardClaims{
 			ExpiresAt: expirationTime.Unix(),
 		},
 	}
 
+	err = godotenv.Load()
+	if err != nil {
+		helpers.Error(w, r, http.StatusInternalServerError, err)
+		return
+	}
+
+	jwtKey := os.Getenv("JWTKey")
+	jwtKeyByte := []byte(jwtKey)
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	tokenString, err := token.SignedString(jwtKey)
+	tokenString, err := token.SignedString(jwtKeyByte)
 	if err != nil {
 		helpers.Error(w, r, http.StatusInternalServerError, err)
 		return
@@ -68,9 +86,34 @@ func (s *Store) signIn(w http.ResponseWriter, r *http.Request, _ httprouter.Para
 }
 
 func (s *Store) welcome(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-	c, err := r.Cookie("token")
+	cookie, err := r.Cookie("token")
 	if err != nil {
 		if err == http.ErrNoCookie {
+			helpers.Error(w, r, http.StatusUnauthorized, err)
+			return
+		}
+
+		helpers.Error(w, r, http.StatusBadRequest, err)
+		return
+	}
+
+	tknStr := cookie.Value
+	claims := &models.Claims{}
+
+	err = godotenv.Load()
+	if err != nil {
+		helpers.Error(w, r, http.StatusInternalServerError, err)
+		return
+	}
+
+	jwtKey := os.Getenv("JWTKey")
+	jwtKeyByte := []byte(jwtKey)
+
+	tkn, err := jwt.ParseWithClaims(tknStr, claims, func(token *jwt.Token) (interface{}, error) {
+		return jwtKeyByte, nil
+	})
+	if err != nil {
+		if err == jwt.ErrSignatureInvalid {
 			helpers.Error(w, r, http.StatusUnauthorized, err)
 			return
 		}
@@ -78,25 +121,10 @@ func (s *Store) welcome(w http.ResponseWriter, r *http.Request, _ httprouter.Par
 		return
 	}
 
-	tknStr := c.Value
-
-	claims := &Claims{}
-
-	tkn, err := jwt.ParseWithClaims(tknStr, claims, func(token *jwt.Token) (interface{}, error) {
-		return jwtKey, nil
-	})
-	if err != nil {
-		if err == jwt.ErrSignatureInvalid {
-			w.WriteHeader(http.StatusUnauthorized)
-			return
-		}
-		w.WriteHeader(http.StatusBadRequest)
-		return
-	}
 	if !tkn.Valid {
-		w.WriteHeader(http.StatusUnauthorized)
+		helpers.Error(w, r, http.StatusUnauthorized, err)
 		return
 	}
 
-	w.Write([]byte(fmt.Sprintf("Welcome %s!", claims.Username)))
+	w.Write([]byte(fmt.Sprintf("Welcome %s!", claims.Login)))
 }
