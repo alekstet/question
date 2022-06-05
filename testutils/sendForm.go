@@ -11,7 +11,6 @@ import (
 	"unsafe"
 
 	"github.com/alekstet/question/api/routes"
-	"github.com/alekstet/question/conf"
 
 	"github.com/julienschmidt/httprouter"
 	"github.com/sirupsen/logrus"
@@ -24,8 +23,8 @@ type Store struct {
 	Db *sql.DB
 }
 
-func NewStore() *conf.Store {
-	return &conf.Store{
+func NewStore() *routes.Store {
+	return &routes.Store{
 		Log:    logrus.New(),
 		Routes: httprouter.New(),
 	}
@@ -50,7 +49,6 @@ func SendForm(t *testing.T, db *sql.DB, method string, target string, body inter
 	}
 
 	r := httptest.NewRequest(method, target, Body)
-	r.Header.Add("Content-Type", "application/json")
 	w := httptest.NewRecorder()
 	mux.ServeHTTP(w, r)
 

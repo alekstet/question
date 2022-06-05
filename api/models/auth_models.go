@@ -3,6 +3,7 @@ package models
 import (
 	"errors"
 	"fmt"
+	"time"
 
 	"github.com/dgrijalva/jwt-go"
 )
@@ -17,6 +18,11 @@ type SignUp struct {
 type SignIn struct {
 	Login    string `json:"login"`
 	Password string `json:"password"`
+}
+
+type SignInData struct {
+	Token   string    `json:"token"`
+	ExpTime time.Time `json:"exp_time"`
 }
 
 type Claims struct {

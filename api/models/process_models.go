@@ -12,17 +12,17 @@ type UsersAuth struct {
 }
 
 type UsersData struct {
-	UserNickname string `json:"userNickname"`
+	UserNickname string `json:"user_nickname"`
 	Name         string `json:"name"`
 	Sex          string `json:"sex"`
 }
 
 type UserQuestion struct {
-	QuestionId   string `json:"questionId"`
-	UserNickname string `json:"userNickname"`
+	QuestionId   string `json:"question_id"`
+	UserNickname string `json:"user_nickname"`
 	Answer       string `json:"answer"`
-	CreatedAt    string `json:"createdAt"`
-	UpdatedAt    string `json:"updatedAt"`
+	CreatedAt    string `json:"created_at"`
+	UpdatedAt    string `json:"updated_at"`
 }
 
 type TodaysInfo struct {

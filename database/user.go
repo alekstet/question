@@ -7,7 +7,6 @@ import (
 )
 
 func (s Store) GetUsers() ([]models.UsersData, error) {
-	fmt.Println("DB")
 	rows, err := s.Db.Query("SELECT User_nickname, Name, Sex FROM users_data")
 	if err != nil {
 		return []models.UsersData{}, err
@@ -41,8 +40,7 @@ SELECT Name, Sex FROM users_data
 WHERE User_nickname = $1`
 
 func (s *Store) GetUserInfo(nickname, sort string) (*models.UserInfo, error) {
-	var name string
-	var sex string
+	var name, sex string
 	usersAnsw := []models.UserAnsw{}
 	sql := fmt.Sprintf(queryGetUserInfo, nickname)
 	if sort == "dateup" {
@@ -55,7 +53,7 @@ func (s *Store) GetUserInfo(nickname, sort string) (*models.UserInfo, error) {
 
 	rows, err := s.Db.Query(sql)
 	if err != nil {
-		return &models.UserInfo{}, err
+		return nil, err
 	}
 
 	defer rows.Close()
@@ -64,7 +62,7 @@ func (s *Store) GetUserInfo(nickname, sort string) (*models.UserInfo, error) {
 		userAnsw := models.UserAnsw{}
 		err := rows.Scan(&userAnsw.Date, &userAnsw.Question, &userAnsw.Answer)
 		if err != nil {
-			return &models.UserInfo{}, err
+			return nil, err
 		}
 
 		usersAnsw = append(usersAnsw, userAnsw)
@@ -72,7 +70,7 @@ func (s *Store) GetUserInfo(nickname, sort string) (*models.UserInfo, error) {
 
 	err = s.Db.QueryRow(queryGetByUsername, nickname).Scan(&name, &sex)
 	if err != nil {
-		return &models.UserInfo{}, err
+		return nil, err
 	}
 
 	return &models.UserInfo{

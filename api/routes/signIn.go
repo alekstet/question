@@ -6,9 +6,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"os"
-	"time"
 
-	"github.com/alekstet/question/api/errors"
 	"github.com/alekstet/question/api/models"
 	"github.com/alekstet/question/helpers"
 	"github.com/dgrijalva/jwt-go"
@@ -16,16 +14,8 @@ import (
 	"github.com/julienschmidt/httprouter"
 )
 
-const existUser = `
-SELECT COUNT(*), Password, Nickname FROM users_auth
-WHERE Login = $1`
-
 func (s *Store) signIn(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-	var (
-		data           models.SignIn
-		nickname, hash string
-		exists         int
-	)
+	var data models.SignIn
 
 	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
@@ -39,40 +29,7 @@ func (s *Store) signIn(w http.ResponseWriter, r *http.Request, _ httprouter.Para
 		return
 	}
 
-	if !data.Valid() {
-		helpers.Error(w, r, http.StatusBadRequest, err)
-		return
-	}
-
-	err = s.Db.QueryRow(existUser, data.Login).Scan(&exists, &hash, &nickname)
-	if err != nil {
-		helpers.Error(w, r, http.StatusUnauthorized, errors.ErrIncorectAuthData)
-		return
-	}
-
-	if exists != 1 && !helpers.CheckPasswordHash(data.Password, hash) {
-		helpers.Error(w, r, http.StatusUnauthorized, errors.ErrIncorectAuthData)
-		return
-	}
-
-	expirationTime := time.Now().Add(5 * time.Minute)
-	claims := &models.Claims{
-		Login: data.Login,
-		StandardClaims: jwt.StandardClaims{
-			ExpiresAt: expirationTime.Unix(),
-		},
-	}
-
-	err = godotenv.Load()
-	if err != nil {
-		helpers.Error(w, r, http.StatusInternalServerError, err)
-		return
-	}
-
-	jwtKey := os.Getenv("JWTKey")
-	jwtKeyByte := []byte(jwtKey)
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	tokenString, err := token.SignedString(jwtKeyByte)
+	signInData, err := s.Querier.SignIn(data)
 	if err != nil {
 		helpers.Error(w, r, http.StatusInternalServerError, err)
 		return
@@ -80,8 +37,8 @@ func (s *Store) signIn(w http.ResponseWriter, r *http.Request, _ httprouter.Para
 
 	http.SetCookie(w, &http.Cookie{
 		Name:    "token",
-		Value:   tokenString,
-		Expires: expirationTime,
+		Value:   signInData.Token,
+		Expires: signInData.ExpTime,
 	})
 }
 

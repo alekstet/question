@@ -30,7 +30,7 @@ func (a *AddQuestionSuite) ExistsAddQuestion() {
 	date := time.Now().Format("02.01.2006")
 	r.Init(date, "How")
 	w := testutils.SendForm(a.T(), a.Db, "POST", "/questions", r)
-	a.Assertions.Equal(400, w.Result().StatusCode)
+	a.Assertions.Equal(500, w.Result().StatusCode)
 }
 
 func (a *AddQuestionSuite) Test() {
