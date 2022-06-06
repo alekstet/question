@@ -26,7 +26,21 @@ func (s *Store) signIn(w http.ResponseWriter, r *http.Request, _ httprouter.Para
 		return
 	}
 
-	signInData, err := s.Querier.SignIn(data)
+	login, err := s.Querier.SignIn(data)
+	if err != nil {
+		helpers.Error(w, r, http.StatusInternalServerError, err)
+		return
+	}
+
+	/* err = godotenv.Load()
+	if err != nil {
+		helpers.Error(w, r, http.StatusInternalServerError, err)
+		return
+	}
+
+	jwtKey := os.Getenv("JWTKey") */
+
+	signInData, err := s.TokenMaker.CreateToken(login)
 	if err != nil {
 		helpers.Error(w, r, http.StatusInternalServerError, err)
 		return

@@ -1,14 +1,9 @@
 package database
 
 import (
-	"os"
-	"time"
-
 	"github.com/alekstet/question/api/errors"
 	"github.com/alekstet/question/api/models"
 	"github.com/alekstet/question/helpers"
-	"github.com/dgrijalva/jwt-go"
-	"github.com/joho/godotenv"
 )
 
 const existUser = `
@@ -86,7 +81,7 @@ func (s Store) SignUp(data models.SignUp) error {
 	return nil
 }
 
-func (s Store) SignIn(data models.SignIn) (*models.SignInData, error) {
+func (s Store) SignIn(data models.SignIn) (string, error) {
 	var (
 		nickname, hash string
 		exists         int
@@ -94,48 +89,18 @@ func (s Store) SignIn(data models.SignIn) (*models.SignInData, error) {
 
 	if !data.Valid() {
 		err := errors.ErrDataNotValid
-		return nil, err
+		return "", err
 	}
 
 	err := s.Db.QueryRow(existUser, data.Login).Scan(&exists, &hash, &nickname)
 	if err != nil {
-		return nil, err
+		return "", err
 	}
 
 	if exists != 1 && !helpers.CheckPasswordHash(data.Password, hash) {
 		err = errors.ErrIncorectAuthData
-		return nil, err
+		return "", err
 	}
 
-	err = godotenv.Load()
-	if err != nil {
-		return nil, err
-	}
-
-	jwtKey := os.Getenv("JWTKey")
-
-	return createToken(data.Login, jwtKey)
-}
-
-func createToken(login, jwtKey string) (*models.SignInData, error) {
-	expTime := time.Now().Add(5 * time.Minute)
-	claims := &models.Claims{
-		Login: login,
-		StandardClaims: jwt.StandardClaims{
-			ExpiresAt: expTime.Unix(),
-		},
-	}
-
-	jwtToken := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	token, err := jwtToken.SignedString([]byte(jwtKey))
-	if err != nil {
-		return nil, err
-	}
-
-	signInData := &models.SignInData{
-		Token:   token,
-		ExpTime: expTime,
-	}
-
-	return signInData, nil
+	return data.Login, nil
 }

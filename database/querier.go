@@ -12,7 +12,7 @@ type Querier interface {
 	AddQuestion(data models.Question) error
 	GetUserInfo(nickname, sort string) (*models.UserInfo, error)
 	GetTodayAnswers(page string) (*models.TodaysInfo, error)
-	SignIn(data models.SignIn) (*models.SignInData, error)
+	SignIn(data models.SignIn) (string, error)
 	SignUp(data models.SignUp) error
 }
 

@@ -14,7 +14,7 @@ type JWTTokenMaker struct {
 	SymmetricKey string
 }
 
-func (maker *JWTTokenMaker) CreateToken(login, jwtKey string) (*models.SignInData, error) {
+func (maker *JWTTokenMaker) CreateToken(login string) (*models.SignInData, error) {
 	expTime := time.Now().Add(5 * time.Minute)
 	claims := &models.Claims{
 		Login: login,
@@ -24,7 +24,7 @@ func (maker *JWTTokenMaker) CreateToken(login, jwtKey string) (*models.SignInDat
 	}
 
 	jwtToken := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	token, err := jwtToken.SignedString([]byte(jwtKey))
+	token, err := jwtToken.SignedString([]byte(maker.SymmetricKey))
 	if err != nil {
 		return nil, err
 	}

@@ -2,6 +2,6 @@ ip: 127.0.0.1
 port: 8080
 db_path: ./database/db.db
 sql_init_path: ./conf/init.sql
-symmetric_key : 30Vt9fH5lIBhg3J0gf1JNwLO
+symmetric_key : my_secret_key
 
     
