@@ -6,26 +6,33 @@ import (
 
 	"github.com/alekstet/question/conf"
 	"github.com/alekstet/question/database"
+	"github.com/alekstet/question/token"
 	"github.com/julienschmidt/httprouter"
 	"github.com/sirupsen/logrus"
 
 	_ "github.com/mattn/go-sqlite3"
 )
 
-func New(db *sql.DB, store database.Querier) *Store {
-	return &Store{
-		Db:      db,
-		Log:     logrus.New(),
-		Routes:  httprouter.New(),
-		Querier: store,
-	}
+type Store struct {
+	Db         *sql.DB
+	Querier    database.Querier
+	Log        *logrus.Logger
+	Routes     *httprouter.Router
+	TokenMaker token.TokenMaker
 }
 
-type Store struct {
-	Db      *sql.DB
-	Log     *logrus.Logger
-	Routes  *httprouter.Router
-	Querier database.Querier
+func New(db *sql.DB, store database.Querier, key string) *Store {
+	jwt := &token.JWTTokenMaker{
+		SymmetricKey: key,
+	}
+
+	return &Store{
+		Db:         db,
+		Querier:    store,
+		Log:        logrus.New(),
+		Routes:     httprouter.New(),
+		TokenMaker: jwt,
+	}
 }
 
 func InitDB(c *conf.ConfigDatabase) (*sql.DB, error) {

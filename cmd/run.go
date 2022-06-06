@@ -23,7 +23,7 @@ func Run(cnf *conf.ConfigDatabase) {
 
 	dbStore := database.NewStore(db)
 
-	store := routes.New(db, dbStore)
+	store := routes.New(db, dbStore, config.SymmetricKey)
 
 	listener, err := net.Listen("tcp", cnf.Host+":"+cnf.Port)
 	if err != nil {

@@ -15,6 +15,7 @@ type SignUp struct {
 	ConfirmPassword string `json:"confirm_password"`
 }
 
+//easyjson
 type SignIn struct {
 	Login    string `json:"login"`
 	Password string `json:"password"`

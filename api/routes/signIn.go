@@ -5,12 +5,9 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
-	"os"
 
 	"github.com/alekstet/question/api/models"
 	"github.com/alekstet/question/helpers"
-	"github.com/dgrijalva/jwt-go"
-	"github.com/joho/godotenv"
 	"github.com/julienschmidt/httprouter"
 )
 
@@ -55,31 +52,10 @@ func (s *Store) welcome(w http.ResponseWriter, r *http.Request, _ httprouter.Par
 	}
 
 	tknStr := cookie.Value
-	claims := &models.Claims{}
 
-	err = godotenv.Load()
+	claims, err := s.TokenMaker.VerifyToken(tknStr)
 	if err != nil {
 		helpers.Error(w, r, http.StatusInternalServerError, err)
-		return
-	}
-
-	jwtKey := os.Getenv("JWTKey")
-	jwtKeyByte := []byte(jwtKey)
-
-	tkn, err := jwt.ParseWithClaims(tknStr, claims, func(token *jwt.Token) (interface{}, error) {
-		return jwtKeyByte, nil
-	})
-	if err != nil {
-		if err == jwt.ErrSignatureInvalid {
-			helpers.Error(w, r, http.StatusUnauthorized, err)
-			return
-		}
-		helpers.Error(w, r, http.StatusBadRequest, err)
-		return
-	}
-
-	if !tkn.Valid {
-		helpers.Error(w, r, http.StatusUnauthorized, err)
 		return
 	}
 

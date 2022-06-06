@@ -15,7 +15,7 @@ const existUser = `
 SELECT COUNT(*), Password, Nickname FROM users_auth
 WHERE Login = $1`
 
-func (s Store) SignIn(data models.SignIn) (*models.SignInData, error) {
+/* func (s Store) SignIn(data models.SignIn) (*models.SignInData, error) {
 	var (
 		nickname, hash string
 		exists         int
@@ -63,7 +63,7 @@ func (s Store) SignIn(data models.SignIn) (*models.SignInData, error) {
 	}
 
 	return signInData, nil
-}
+} */
 
 const insertUsersCreds = `INSERT INTO users_auth (Login, Password, Nickname) VALUES ($1, $2, $3)`
 
@@ -84,4 +84,58 @@ func (s Store) SignUp(data models.SignUp) error {
 	}
 
 	return nil
+}
+
+func (s Store) SignIn(data models.SignIn) (*models.SignInData, error) {
+	var (
+		nickname, hash string
+		exists         int
+	)
+
+	if !data.Valid() {
+		err := errors.ErrDataNotValid
+		return nil, err
+	}
+
+	err := s.Db.QueryRow(existUser, data.Login).Scan(&exists, &hash, &nickname)
+	if err != nil {
+		return nil, err
+	}
+
+	if exists != 1 && !helpers.CheckPasswordHash(data.Password, hash) {
+		err = errors.ErrIncorectAuthData
+		return nil, err
+	}
+
+	err = godotenv.Load()
+	if err != nil {
+		return nil, err
+	}
+
+	jwtKey := os.Getenv("JWTKey")
+
+	return createToken(data.Login, jwtKey)
+}
+
+func createToken(login, jwtKey string) (*models.SignInData, error) {
+	expTime := time.Now().Add(5 * time.Minute)
+	claims := &models.Claims{
+		Login: login,
+		StandardClaims: jwt.StandardClaims{
+			ExpiresAt: expTime.Unix(),
+		},
+	}
+
+	jwtToken := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	token, err := jwtToken.SignedString([]byte(jwtKey))
+	if err != nil {
+		return nil, err
+	}
+
+	signInData := &models.SignInData{
+		Token:   token,
+		ExpTime: expTime,
+	}
+
+	return signInData, nil
 }
