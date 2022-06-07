@@ -1,0 +1,8 @@
+ip: localhost
+port: 8080
+db_path: ./database/db.db
+sql_init_path: ./conf/init.sql
+symmetric_key : my_secret_key
+access_duration : 1h
+
+    
