@@ -9,10 +9,6 @@ func Routes(s Store) *gin.Engine {
 	return s.Routes
 }
 
-/* func (rr *R) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	rr.Router.ServeHTTP(w, r)
-} */
-
 func errorResponse(err error) gin.H {
 	return gin.H{"error": err.Error()}
 }

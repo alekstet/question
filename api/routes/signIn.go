@@ -10,54 +10,54 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func (s *Store) signIn(c *gin.Context) {
+func (store *Store) signIn(ctx *gin.Context) {
 	var data models.SignIn
 
-	body, err := ioutil.ReadAll(c.Request.Body)
+	body, err := ioutil.ReadAll(ctx.Request.Body)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, errorResponse(err))
+		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		return
 	}
 
 	err = json.Unmarshal(body, &data)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, errorResponse(err))
+		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		return
 	}
 
-	login, err := s.Querier.SignIn(data)
+	login, err := store.Querier.SignIn(ctx, data)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, errorResponse(err))
+		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		return
 	}
 
-	signInData, err := s.TokenMaker.CreateToken(login, s.Config.AccessDuration)
+	signInData, err := store.TokenMaker.CreateToken(login, store.Config.AccessDuration)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, errorResponse(err))
+		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		return
 	}
 
-	expTime := s.Config.AccessDuration.Seconds()
-	c.SetCookie("token", signInData.Token, int(expTime), "/", s.Config.Host, false, true)
+	expTime := store.Config.AccessDuration.Seconds()
+	ctx.SetCookie("token", signInData.Token, int(expTime), "/", store.Config.Host, false, true)
 }
 
-func (s *Store) welcome(c *gin.Context) {
-	cookie, err := c.Cookie("token")
+func (store *Store) welcome(ctx *gin.Context) {
+	cookie, err := ctx.Cookie("token")
 	if err != nil {
 		if err == http.ErrNoCookie {
-			c.JSON(http.StatusUnauthorized, errorResponse(err))
+			ctx.JSON(http.StatusUnauthorized, errorResponse(err))
 			return
 		}
 
-		c.JSON(http.StatusInternalServerError, errorResponse(err))
+		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		return
 	}
 
-	claims, err := s.TokenMaker.VerifyToken(cookie)
+	claims, err := store.TokenMaker.VerifyToken(cookie)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, errorResponse(err))
+		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		return
 	}
 
-	c.String(http.StatusOK, fmt.Sprintf("Welcome %s!", claims.Login))
+	ctx.String(http.StatusOK, fmt.Sprintf("Welcome %s!", claims.Login))
 }

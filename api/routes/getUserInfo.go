@@ -7,15 +7,15 @@ import (
 	_ "github.com/mattn/go-sqlite3"
 )
 
-func (s *Store) getUserInfo(c *gin.Context) {
-	sort := c.Request.URL.Query().Get("sort")
-	nickname := c.Param("user")
+func (store *Store) getUserInfo(ctx *gin.Context) {
+	sort := ctx.Request.URL.Query().Get("sort")
+	nickname := ctx.Param("user")
 
-	userInfo, err := s.Querier.GetUserInfo(nickname, sort)
+	userInfo, err := store.Querier.GetUserInfo(ctx, nickname, sort)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, errorResponse(err))
+		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		return
 	}
 
-	c.JSON(http.StatusOK, userInfo)
+	ctx.JSON(http.StatusOK, userInfo)
 }

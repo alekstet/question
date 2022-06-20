@@ -1,6 +1,8 @@
 package database
 
 import (
+	"context"
+
 	"github.com/alekstet/question/api/errors"
 	"github.com/alekstet/question/api/models"
 	"github.com/alekstet/question/helpers"
@@ -15,7 +17,7 @@ WHERE Login = $1`
 INSERT INTO users_auth (Login, Password, Nickname) VALUES ($1, $2, $3)`
 )
 
-func (s Store) SignUp(data models.SignUp) error {
+func (store *Store) SignUp(ctx context.Context, data models.SignUp) error {
 	err := data.Valid()
 	if err != nil {
 		return err
@@ -26,7 +28,7 @@ func (s Store) SignUp(data models.SignUp) error {
 		return err
 	}
 
-	_, err = s.Db.Exec(insertUsersCreds, data.Login, encryptedPassword, data.Nickname)
+	_, err = store.Db.ExecContext(ctx, insertUsersCreds, data.Login, encryptedPassword, data.Nickname)
 	if err != nil {
 		return err
 	}
@@ -34,7 +36,7 @@ func (s Store) SignUp(data models.SignUp) error {
 	return nil
 }
 
-func (s Store) SignIn(data models.SignIn) (string, error) {
+func (store *Store) SignIn(ctx context.Context, data models.SignIn) (string, error) {
 	var (
 		nickname, hash string
 		exists         int
@@ -45,7 +47,7 @@ func (s Store) SignIn(data models.SignIn) (string, error) {
 		return "", err
 	}
 
-	err := s.Db.QueryRow(existUser, data.Login).Scan(&exists, &hash, &nickname)
+	err := store.Db.QueryRowContext(ctx, existUser, data.Login).Scan(&exists, &hash, &nickname)
 	if err != nil {
 		return "", err
 	}

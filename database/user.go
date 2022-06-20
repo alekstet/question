@@ -1,13 +1,14 @@
 package database
 
 import (
+	"context"
 	"fmt"
 
 	"github.com/alekstet/question/api/models"
 )
 
-func (s Store) GetUsers() ([]models.UsersData, error) {
-	rows, err := s.Db.Query("SELECT User_nickname, Name, Sex FROM users_data")
+func (store *Store) GetUsers(ctx context.Context) ([]models.UsersData, error) {
+	rows, err := store.Db.QueryContext(ctx, "SELECT User_nickname, Name, Sex FROM users_data")
 	if err != nil {
 		return []models.UsersData{}, err
 	}
@@ -41,7 +42,7 @@ SELECT Name, Sex FROM users_data
 WHERE User_nickname = $1`
 )
 
-func (s *Store) GetUserInfo(nickname, sort string) (*models.UserInfo, error) {
+func (store *Store) GetUserInfo(ctx context.Context, nickname, sort string) (*models.UserInfo, error) {
 	var name, sex string
 	usersAnsw := []models.UserAnsw{}
 	sql := fmt.Sprintf(queryGetUserInfo, nickname)
@@ -53,7 +54,7 @@ func (s *Store) GetUserInfo(nickname, sort string) (*models.UserInfo, error) {
 		sql = fmt.Sprintf("%s ORDER BY Date DESC", sql)
 	}
 
-	rows, err := s.Db.Query(sql)
+	rows, err := store.Db.QueryContext(ctx, sql)
 	if err != nil {
 		return nil, err
 	}
@@ -70,7 +71,7 @@ func (s *Store) GetUserInfo(nickname, sort string) (*models.UserInfo, error) {
 		usersAnsw = append(usersAnsw, userAnsw)
 	}
 
-	err = s.Db.QueryRow(queryGetByUsername, nickname).Scan(&name, &sex)
+	err = store.Db.QueryRowContext(ctx, queryGetByUsername, nickname).Scan(&name, &sex)
 	if err != nil {
 		return nil, err
 	}

@@ -9,25 +9,25 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func (s *Store) signUp(c *gin.Context) {
+func (store *Store) signUp(ctx *gin.Context) {
 	var data models.SignUp
-	body, err := ioutil.ReadAll(c.Request.Body)
+	body, err := ioutil.ReadAll(ctx.Request.Body)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, errorResponse(err))
+		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		return
 	}
 
 	err = json.Unmarshal(body, &data)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, errorResponse(err))
+		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		return
 	}
 
-	err = s.Querier.SignUp(data)
+	err = store.Querier.SignUp(ctx, data)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, errorResponse(err))
+		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		return
 	}
 
-	c.JSON(http.StatusCreated, nil)
+	ctx.JSON(http.StatusCreated, nil)
 }

@@ -1,6 +1,7 @@
 package database
 
 import (
+	"context"
 	"time"
 
 	"github.com/alekstet/question/api/errors"
@@ -17,14 +18,14 @@ INSERT INTO questions (Date, Question)
 VALUES ($1, $2)`
 )
 
-func (s *Store) AddQuestion(data models.Question) error {
+func (store *Store) AddQuestion(ctx context.Context, data models.Question) error {
 	var exists int
 	date := time.Now().Format("02.01.2006")
 	if !data.Valid() {
 		return errors.ErrDataNotValid
 	}
 
-	err := s.Db.QueryRow(questionExists, date, data.Question).Scan(&exists)
+	err := store.Db.QueryRowContext(ctx, questionExists, date, data.Question).Scan(&exists)
 	if err != nil {
 		return err
 	}
@@ -33,7 +34,7 @@ func (s *Store) AddQuestion(data models.Question) error {
 		return err
 	}
 
-	_, err = s.Db.Exec(insertQuestion, date, data.Question)
+	_, err = store.Db.ExecContext(ctx, insertQuestion, date, data.Question)
 	if err != nil {
 		return err
 	}

@@ -11,7 +11,7 @@ import (
 	_ "github.com/mattn/go-sqlite3"
 )
 
-func (store *Store) updateAnswer(ctx *gin.Context) {
+func (store *Store) createAnswer(ctx *gin.Context) {
 	var data models.UserQuestion
 	body, err := ioutil.ReadAll(ctx.Request.Body)
 	if err != nil {
@@ -25,11 +25,11 @@ func (store *Store) updateAnswer(ctx *gin.Context) {
 		return
 	}
 
-	err = store.Querier.UpdateAnswer(ctx, data)
+	err = store.Querier.CreateAnswer(ctx, data)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		return
 	}
 
-	ctx.JSON(http.StatusOK, nil)
+	ctx.JSON(http.StatusCreated, nil)
 }

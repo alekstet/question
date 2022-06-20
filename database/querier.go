@@ -1,19 +1,21 @@
 package database
 
 import (
+	"context"
+
 	"github.com/alekstet/question/api/models"
 )
 
 type Querier interface {
-	UpdateAnswer(models.UserQuestion) error
-	CreateAnswer(models.UserQuestion) error
-	DeleteAnswer(models.UserQuestion) error
-	GetUsers() ([]models.UsersData, error)
-	AddQuestion(data models.Question) error
-	GetUserInfo(nickname, sort string) (*models.UserInfo, error)
-	GetTodayAnswers(page string) (*models.TodaysInfo, error)
-	SignIn(data models.SignIn) (string, error)
-	SignUp(data models.SignUp) error
+	UpdateAnswer(context.Context, models.UserQuestion) error
+	CreateAnswer(context.Context, models.UserQuestion) error
+	DeleteAnswer(context.Context, models.UserQuestion) error
+	GetUsers(context.Context) ([]models.UsersData, error)
+	AddQuestion(context.Context, models.Question) error
+	GetUserInfo(context.Context, string, string) (*models.UserInfo, error)
+	GetTodayAnswers(context.Context, string) (*models.TodaysInfo, error)
+	SignIn(context.Context, models.SignIn) (string, error)
+	SignUp(context.Context, models.SignUp) error
 }
 
 var _ Querier = (*Store)(nil)
